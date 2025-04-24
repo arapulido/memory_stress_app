@@ -32,7 +32,7 @@ docker run memory-stress 100 1024 60 30
 
 - `initial_memory`: Initial memory allocation in MB
 - `final_memory`: Final memory allocation in MB (will cause OOM)
-- `duration`: Time in seconds for incremental allocation after initial wait
+- `duration`: Time in seconds to reach final memory after initial wait
 - `initial_wait`: Time in seconds to wait after initial allocation before starting incremental allocation
 
 ## Requirements
@@ -45,8 +45,10 @@ docker run memory-stress 100 1024 60 30
 1. The application first allocates the initial amount of memory specified
 2. It then waits for the specified initial wait time
 3. After the wait, it gradually increases memory allocation over the specified duration
-4. Memory is allocated in 1KB chunks and filled with random data
-5. The application will eventually trigger an OOM error when it reaches the system's memory limit
+4. Memory is allocated in 1KB chunks and filled with a constant value (0x42)
+5. The application will ensure it reaches exactly the target memory at the end of the duration
+6. If it falls behind schedule, it will catch up at the end to reach the target memory
+7. The application will eventually trigger an OOM error when it reaches the system's memory limit
 
 ## Notes
 
@@ -54,3 +56,4 @@ docker run memory-stress 100 1024 60 30
 - Memory allocation is done in small increments to ensure smooth progression
 - The application can be interrupted with Ctrl+C at any time
 - When running in Docker, the container will be killed by Docker when it hits the OOM condition
+- The memory is filled with a constant value (0x42) for efficient allocation
